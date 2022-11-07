@@ -24,24 +24,10 @@ export default class TreeRepositoryV2 extends BaseRepository<Tree> {
   }
 
   async getByOrganization(
-    organization_id: number,
+    organization_id: string | number,
     options: FilterOptions,
-    totalCount = false,
   ) {
     const { limit, offset } = options;
-
-    if (totalCount) {
-      const totalSql = `
-        SELECT
-          COUNT(*)
-        FROM trees
-        LEFT JOIN planter ON trees.planter_id = planter.id
-        WHERE
-          planter.organization_id in ( SELECT entity_id from getEntityRelationshipChildren(${organization_id}))
-      `;
-      const total = await this.session.getDB().raw(totalSql);
-      return parseInt(total.rows[0].count.toString());
-    }
 
     const sql = `
       SELECT
@@ -52,7 +38,7 @@ export default class TreeRepositoryV2 extends BaseRepository<Tree> {
       region.name as country_name,
       entity.id as organization_id,
       entity.name as organization_name
-      FROM trees
+      FROM ${this.tableName}
       LEFT JOIN planter ON trees.planter_id = planter.id
       LEFT JOIN entity ON entity.id = planter.organization_id
       LEFT JOIN tree_species 

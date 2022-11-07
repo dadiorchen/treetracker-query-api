@@ -69,6 +69,8 @@ app.use('/v2/captures', capturesRouter);
 app.use('/raw-captures', rawCapturesRouter);
 app.use('/grower-accounts', growerAccountsRouter);
 app.use('/v2/trees', treesRouterV2);
+app.use('/v2/wallets', walletsRouter);
+app.use('/v2/tokens', tokensRouter);
 // Global error handler
 app.use(errorHandler);
 
